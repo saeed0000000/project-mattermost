@@ -68,7 +68,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # Assemble a runtime filesystem layout similar to official packaging
 RUN set -eux; \
     mkdir -p /out/layout/{bin,client,config,fonts,i18n,logs,plugins,data,templates}; \
-    cp -a config/config.json /out/layout/config/config.json; \
+    OUTPUT_CONFIG=/out/layout/config/config.json go run ./scripts/config_generator; \
     cp -a fonts/. /out/layout/fonts/; \
     cp -a i18n/. /out/layout/i18n/; \
     cp -a templates/. /out/layout/templates/; \

@@ -1,0 +1,11 @@
+environment       = "dev"
+project_name      = "mm-devops"
+region            = "eu-north-1"
+aws_profile       = "my-terraform-profile"
+az_count          = 2
+nat_single        = true
+node_instance_type = "t3.micro"
+node_min_size      = 3
+node_max_size      = 6
+node_desired_size  = 3
+cluster_version    = "1.29"

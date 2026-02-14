@@ -74,3 +74,14 @@ hpa:
   targetCPUUtilizationPercentage: 70
 
 storageClassName: gp3
+
+ingress:
+  enabled: false
+  className: alb
+  host: ""
+  path: /
+  pathType: Prefix
+  annotations: {}
+  tls:
+    enabled: false
+    secretName: ""

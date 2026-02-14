@@ -50,7 +50,7 @@ mattermost:
   replicaCount: 1
   storage: 50Gi
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 8065
   siteUrl: ""
   resources:
@@ -72,3 +72,18 @@ hpa:
   targetCPUUtilizationPercentage: 70
 
 storageClassName: gp3
+
+# When enabled, switch service.type to ClusterIP and expose via Ingress (ALB).
+ingress:
+  enabled: true
+  className: alb
+  host: ""
+  path: /
+  pathType: Prefix
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+  tls:
+    enabled: false
+    secretName: ""

@@ -1,0 +1,25 @@
+# Install with:
+# helm repo add eks https://aws.github.io/eks-charts
+# helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
+#   -n kube-system -f helm/addons/aws-load-balancer-controller/values.yaml
+#
+# Prereqs:
+# - Cluster has OIDC enabled.
+# - Create an IRSA role for service account "aws-load-balancer-controller" in "kube-system".
+
+clusterName: mm-devops-prod
+region: eu-north-1
+
+replicaCount: 1
+
+serviceAccount:
+  create: false
+  name: aws-load-balancer-controller
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi

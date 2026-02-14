@@ -3,43 +3,44 @@
 ```mermaid
 flowchart TB
   user[User Browser]
-  gha[GitHub Actions]
+  gha[GitHub Actions CI/CD]
   ecr[(Amazon ECR)]
 
   subgraph aws[AWS eu-north-1]
     subgraph vpc[VPC]
       igw[Internet Gateway]
-      nat[NAT Gateway]
       subgraph pub[Public Subnets]
-        alb[Load Balancer]
+        lb[AWS Load Balancer]
+        nat[NAT Gateway]
       end
-      subgraph priv[Private Subnets]
+      subgraph privApp[Private Subnets app]
         eks[EKS Cluster]
         ng[Managed Node Group]
+        svc[K8s Service LoadBalancer]
         mm[Mattermost Pods]
-        redis[Redis]
       end
     end
-    rds[(RDS PostgreSQL)]
+    subgraph privData[Private Subnets data]
+      rds[(RDS PostgreSQL)]
+      cache[(ElastiCache Redis)]
+    end
     s3[(S3 File Storage)]
     efs[(EFS Shared Storage)]
   end
 
-  user --> alb --> mm
-  mm --> rds
-  mm --> redis
+  user --> lb --> svc --> mm
   mm --> s3
   mm --> efs
+  mm --> rds
+  mm --> cache
 
-  gha --> ecr
-  ecr --> mm
-  igw --> alb
-  nat --> priv
+  gha --> ecr --> mm
   eks --> ng --> mm
+  ng --> nat --> igw
 ```
 
 ## Notes
 
-- Ingress/LB serves Mattermost traffic.
-- App data path: `Mattermost -> RDS/Redis/S3/EFS`.
+- Traffic is exposed via `Service type=LoadBalancer` (no Ingress controller).
+- App data path: `Mattermost -> RDS / ElastiCache / S3 / EFS`.
 - CI/CD path: `GitHub Actions -> ECR -> EKS rollout`.

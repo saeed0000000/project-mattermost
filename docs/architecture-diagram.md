@@ -8,31 +8,40 @@
   'primaryBorderColor':'#B85E00',
   'lineColor':'#545B64',
   'tertiaryColor':'#F2F3F3'
-}}}%%
+},'flowchart':{'curve':'stepAfter'}}}%%
 
 flowchart TB
-  user[User Browser]
-  gha[GitHub Actions CI/CD]
-  ecr[(Amazon ECR)]
-  s3[(Amazon S3 File Storage)]
-  efs[(Amazon EFS)]
+  %% External actors
+  subgraph ext[External]
+    direction LR
+    user[User Browser]
+    gha[GitHub Actions]
+  end
 
   subgraph aws[AWS eu-north-1]
-    %% EKS control plane is managed by AWS (not inside your subnets)
-    ekscp[EKS Control Plane Public API]
+    direction TB
+    ekscp[EKS Control Plane API]
+
+    subgraph services[AWS Managed Services]
+      direction LR
+      ecr[(ECR)]
+      s3[(S3)]
+      efs[(EFS)]
+    end
 
     subgraph vpc[VPC]
+      direction TB
       igw[Internet Gateway]
 
       subgraph pub[Public Subnets]
-        alb[ALB Ingress]
         nat[NAT Gateway]
+        alb[ALB]
       end
 
       subgraph privApp[Private Subnets app]
-        ng[Managed Node Group EC2 Workers]
-        lbc[AWS Load Balancer Controller]
-        ing[Kubernetes Ingress Resource]
+        ng[Node Group]
+        lbc[ALB Controller]
+        ing[Ingress Resource]
         svc[Service ClusterIP]
         mm[Mattermost Pods]
         efsmt[EFS Mount Targets]
@@ -45,12 +54,12 @@ flowchart TB
     end
   end
 
-  %% User traffic path
+  %% Traffic path
   user --> alb --> svc --> mm
 
   %% Ingress provisions ALB via the controller (conceptual)
   ing -. rules .-> lbc
-  lbc -. provisions/updates .-> alb
+  lbc -. provisions .-> alb
 
   %% Control plane schedules workloads onto nodes
   ekscp --> ng --> mm
@@ -77,9 +86,10 @@ flowchart TB
   classDef light fill:#F2F3F3,stroke:#D5DBDB,color:#232F3E;
   classDef data fill:#E6F2FF,stroke:#3B8EEA,color:#0B1F2A;
 
-  class vpc,pub,privApp,privData light;
+  class ext,aws,vpc,pub,privApp,privData,services light;
   class igw,nat dark;
   class gha awsfill;
+  class user light;
   class ekscp light;
   class alb,ng,lbc,ing,svc,mm light;
   class rds,cache,ecr,s3,efs,efsmt data;

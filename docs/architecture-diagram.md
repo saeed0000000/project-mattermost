@@ -13,44 +13,52 @@
 flowchart TB
   %% External actors
   subgraph ext[External]
-    direction LR
+    direction TB
     user[User Browser]
     gha[GitHub Actions]
-    internet[Internet]
   end
+
+  internet[Internet]
 
   subgraph aws[AWS eu-north-1]
     direction TB
     ekscp[EKS Control Plane API]
 
-    subgraph services[AWS Managed Services]
+    subgraph row[ ]
       direction LR
-      ecr[(ECR)]
-      s3[(S3)]
-      efs[(EFS)]
-    end
 
-    subgraph vpc[VPC]
-      direction TB
-      igw[Internet Gateway]
+      subgraph vpc[VPC]
+        direction LR
 
-      subgraph pub[Public Subnets]
-        nat[NAT Gateway]
-        alb[ALB]
+        subgraph pub[Public Subnets]
+          direction TB
+          alb[ALB]
+          nat[NAT Gateway]
+          igw[Internet Gateway]
+        end
+
+        subgraph privApp[Private Subnets app]
+          direction TB
+          ing[Ingress Resource]
+          lbc[ALB Controller]
+          svc[Service ClusterIP]
+          mm[Mattermost Pods]
+          ng[Node Group]
+          efsmt[EFS Mount Targets]
+        end
+
+        subgraph privData[Private Subnets data]
+          direction TB
+          rds[(RDS PostgreSQL)]
+          cache[(ElastiCache Redis)]
+        end
       end
 
-      subgraph privApp[Private Subnets app]
-        ng[Node Group]
-        lbc[ALB Controller]
-        ing[Ingress Resource]
-        svc[Service ClusterIP]
-        mm[Mattermost Pods]
-        efsmt[EFS Mount Targets]
-      end
-
-      subgraph privData[Private Subnets data]
-        rds[(RDS PostgreSQL)]
-        cache[(ElastiCache Redis)]
+      subgraph services[AWS Managed Services]
+        direction TB
+        ecr[(ECR)]
+        s3[(S3)]
+        efs[(EFS)]
       end
     end
   end
@@ -59,8 +67,8 @@ flowchart TB
   user --> alb --> svc --> mm
 
   %% Ingress provisions ALB via the controller (conceptual)
-  ing -. rules .-> lbc
-  lbc -. provisions .-> alb
+  ing -.-> lbc
+  lbc -.-> alb
 
   %% Control plane schedules workloads onto nodes
   ekscp --> ng --> mm
@@ -69,8 +77,7 @@ flowchart TB
   mm --> rds
   mm --> cache
   mm --> s3
-  mm --> efs
-  efs --> efsmt --> mm
+  mm --> efsmt --> efs
 
   %% CI/CD
   gha --> ecr
@@ -96,6 +103,9 @@ flowchart TB
   class ekscp light;
   class alb,ng,lbc,ing,svc,mm light;
   class rds,cache,ecr,s3,efs,efsmt data;
+
+  %% Hide the helper layout container
+  style row fill:transparent,stroke:transparent
 ```
 
 ## Notes

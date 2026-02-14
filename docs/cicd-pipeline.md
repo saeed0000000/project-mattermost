@@ -5,9 +5,9 @@ flowchart LR
   dev[Developer]
   push[git push to test-coding]
   build[Workflow: build-push-ecr]
-  oidc[OIDC assume-role (AWS_ROLE_ARN)]
+  oidc[OIDC assume-role: AWS_ROLE_ARN]
   ecr[(ECR: mm-devops-prod)]
-  deploy[Workflow: deploy-eks (manual or auto later)]
+  deploy[Workflow: deploy-eks - manual/auto]
   eks[EKS rollout via Helm]
 
   dev --> push --> build

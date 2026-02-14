@@ -27,6 +27,7 @@ permissions:
 env:
   AWS_REGION: eu-north-1
   IMAGE_REPOSITORY: 522195962232.dkr.ecr.eu-north-1.amazonaws.com/mm-devops-prod
+  MM_DB_PASSWORD: ${{ secrets.MM_DB_PASSWORD }}
 
 jobs:
   deploy:
@@ -57,6 +58,13 @@ jobs:
             --region "$AWS_REGION" \
             --name "${{ inputs.cluster_name }}"
 
+      - name: Validate required secrets
+        run: |
+          if [ -z "${MM_DB_PASSWORD}" ]; then
+            echo "MM_DB_PASSWORD is required in GitHub Actions secrets."
+            exit 1
+          fi
+
       - name: Deploy with Helm
         run: |
           helm upgrade --install "${{ inputs.release_name }}" ./helm/mattermost \
@@ -65,6 +73,7 @@ jobs:
             -f ./helm/mattermost/values.prod.yaml \
             --set image.repository="${IMAGE_REPOSITORY}" \
             --set image.tag="${{ inputs.image_tag }}" \
+            --set-string postgres.password="${MM_DB_PASSWORD}" \
             --atomic \
             --timeout 15m
 

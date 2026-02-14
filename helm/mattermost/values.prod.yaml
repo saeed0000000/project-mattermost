@@ -19,7 +19,8 @@ postgres:
   sslmode: require
   db: mattermost
   user: mmuser
-  password: 3TMPpS%!acX4Xld4R7ih
+  # Set via CI secret at deploy time (MM_DB_PASSWORD).
+  password: ""
 
 redis:
   enabled: false

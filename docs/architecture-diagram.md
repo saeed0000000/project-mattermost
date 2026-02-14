@@ -14,54 +14,62 @@ flowchart TB
   user[User Browser]
   gha[GitHub Actions CI/CD]
   ecr[(Amazon ECR)]
+  s3[(Amazon S3 File Storage)]
+  efs[(Amazon EFS)]
 
   subgraph aws[AWS eu-north-1]
+    %% EKS control plane is managed by AWS (not inside your subnets)
+    ekscp[EKS Control Plane Public API]
+
     subgraph vpc[VPC]
       igw[Internet Gateway]
 
       subgraph pub[Public Subnets]
+        alb[ALB Ingress]
         nat[NAT Gateway]
       end
 
       subgraph privApp[Private Subnets app]
-        eksapi[EKS API endpoint public]
-        eks[EKS Cluster]
-        ng[Managed Node Group]
+        ng[Managed Node Group EC2 Workers]
         lbc[AWS Load Balancer Controller]
-        ing[Ingress ALB]
+        ing[Kubernetes Ingress Resource]
         svc[Service ClusterIP]
         mm[Mattermost Pods]
+        efsmt[EFS Mount Targets]
+      end
+
+      subgraph privData[Private Subnets data]
+        rds[(RDS PostgreSQL)]
+        cache[(ElastiCache Redis)]
       end
     end
-
-    subgraph privData[Private Subnets data]
-      rds[(RDS PostgreSQL)]
-      cache[(ElastiCache Redis)]
-    end
-
-    s3[(S3 File Storage)]
-    efs[(EFS Shared Storage)]
   end
 
   %% User traffic path
-  user --> ing --> svc --> mm
+  user --> alb --> svc --> mm
+
+  %% Ingress provisions ALB via the controller (conceptual)
+  ing -. rules .-> lbc
+  lbc -. provisions/updates .-> alb
+
+  %% Control plane schedules workloads onto nodes
+  ekscp --> ng --> mm
 
   %% App dependencies
   mm --> rds
   mm --> cache
   mm --> s3
   mm --> efs
+  efs --> efsmt --> mm
 
-  %% Control plane and scheduling
-  eksapi --> eks --> ng --> mm
-
-  %% CI/CD path
+  %% CI/CD
   gha --> ecr
-  ecr --> mm
-  gha --> eksapi
+  gha --> ekscp
 
-  %% Outbound to AWS services (no VPC endpoints)
+  %% Image pulls / outbound to AWS services (no VPC endpoints)
   ng --> nat --> igw
+  nat --> ecr
+  nat --> s3
 
   %% Styling
   classDef awsfill fill:#FF9900,stroke:#B85E00,color:#232F3E;
@@ -69,15 +77,16 @@ flowchart TB
   classDef light fill:#F2F3F3,stroke:#D5DBDB,color:#232F3E;
   classDef data fill:#E6F2FF,stroke:#3B8EEA,color:#0B1F2A;
 
-  class aws,vpc,pub,privApp,privData light;
+  class vpc,pub,privApp,privData light;
   class igw,nat dark;
-  class gha,ecr awsfill;
-  class eksapi,eks,ng,lbc,ing,svc,mm light;
-  class rds,cache,s3,efs data;
+  class gha awsfill;
+  class ekscp light;
+  class alb,ng,lbc,ing,svc,mm light;
+  class rds,cache,ecr,s3,efs,efsmt data;
 ```
 
 ## Notes
 
-- Traffic is exposed via Ingress (AWS Load Balancer Controller -> ALB -> Service ClusterIP).
+- Traffic is exposed via Ingress (ALB -> Service ClusterIP -> Pods).
 - App data path: `Mattermost -> RDS / ElastiCache / S3 / EFS`.
 - CI/CD path: `GitHub Actions -> ECR -> EKS rollout`.

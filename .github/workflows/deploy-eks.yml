@@ -1,0 +1,73 @@
+name: deploy-eks
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy from ECR"
+        required: true
+        default: "latest"
+      cluster_name:
+        description: "EKS cluster name"
+        required: true
+        default: "mm-devops-prod"
+      namespace:
+        description: "Kubernetes namespace"
+        required: true
+        default: "mattermost"
+      release_name:
+        description: "Helm release name"
+        required: true
+        default: "mattermost"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: eu-north-1
+  IMAGE_REPOSITORY: 522195962232.dkr.ecr.eu-north-1.amazonaws.com/mm-devops-prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.15
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region "$AWS_REGION" \
+            --name "${{ inputs.cluster_name }}"
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install "${{ inputs.release_name }}" ./helm/mattermost \
+            -n "${{ inputs.namespace }}" \
+            --create-namespace \
+            -f ./helm/mattermost/values.prod.yaml \
+            --set image.repository="${IMAGE_REPOSITORY}" \
+            --set image.tag="${{ inputs.image_tag }}" \
+            --atomic \
+            --timeout 15m
+
+      - name: Wait for rollout
+        run: |
+          kubectl -n "${{ inputs.namespace }}" rollout status deployment/"${{ inputs.release_name }}" --timeout=10m

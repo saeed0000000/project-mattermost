@@ -20,7 +20,8 @@ postgres:
   storage: 20Gi
   db: mattermost
   user: mmuser
-  password: mmpass
+  # Set via --set-string postgres.password=... or external secret.
+  password: ""
 
 redis:
   enabled: false

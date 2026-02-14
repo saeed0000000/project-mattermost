@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mmpass
+      POSTGRES_DB: mattermost
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mmuser -d mattermost"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  mattermost:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mattermost-devops:prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8065:8065"
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mmpass@postgres:5432/mattermost?sslmode=disable&connect_timeout=10"
+      MM_SERVICESETTINGS_SITEURL: "http://localhost:8065"
+    volumes:
+      - mm-data:/mattermost/data
+      - mm-logs:/mattermost/logs
+      - mm-config:/mattermost/config
+      - mm-plugins:/mattermost/plugins
+      - mm-client-plugins:/mattermost/client/plugins
+
+volumes:
+  pgdata:
+  mm-data:
+  mm-logs:
+  mm-config:
+  mm-plugins:
+  mm-client-plugins:

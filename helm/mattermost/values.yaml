@@ -1,0 +1,87 @@
+namespace: mattermost
+createNamespace: true
+
+image:
+  repository: 522195962232.dkr.ecr.eu-north-1.amazonaws.com/mm-devops-prod
+  tag: latest
+  pullPolicy: Always
+
+serviceAccount:
+  create: true
+  name: mattermost
+  annotations: {}
+
+postgres:
+  enabled: false
+  host: ""
+  port: 5432
+  sslmode: disable
+  image: postgres:16
+  storage: 20Gi
+  db: mattermost
+  user: mmuser
+  # Set via --set-string postgres.password=... or external secret.
+  password: ""
+
+redis:
+  enabled: false
+  host: ""
+  port: 6379
+  password: ""
+  image: redis:7
+
+filestore:
+  driver: amazons3
+  s3:
+    bucket: ""
+    region: eu-north-1
+    endpoint: ""
+    ssl: true
+
+efs:
+  enabled: false
+  fileSystemId: ""
+  storageClassName: efs
+  storage: 50Gi
+  basePath: "/mattermost"
+  directoryPerms: "0770"
+  gidRangeStart: 1000
+  gidRangeEnd: 2000
+
+mattermost:
+  replicaCount: 1
+  storage: 50Gi
+  service:
+    type: LoadBalancer
+    port: 8065
+  siteUrl: ""
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+pdb:
+  enabled: false
+  minAvailable: 0
+
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 70
+
+storageClassName: gp3
+
+ingress:
+  enabled: false
+  className: alb
+  host: ""
+  path: /
+  pathType: Prefix
+  annotations: {}
+  tls:
+    enabled: false
+    secretName: ""

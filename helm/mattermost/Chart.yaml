@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mattermost
+description: Mattermost stack (PostgreSQL, Redis, Mattermost) for learning Helm
+type: application
+version: 0.1.0
+appVersion: "11.5.0"

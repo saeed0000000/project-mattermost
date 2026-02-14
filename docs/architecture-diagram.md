@@ -16,6 +16,7 @@ flowchart TB
     direction LR
     user[User Browser]
     gha[GitHub Actions]
+    internet[Internet]
   end
 
   subgraph aws[AWS eu-north-1]
@@ -77,8 +78,9 @@ flowchart TB
 
   %% Image pulls / outbound to AWS services (no VPC endpoints)
   ng --> nat --> igw
-  nat --> ecr
-  nat --> s3
+  igw --> internet
+  internet --> ecr
+  internet --> s3
 
   %% Styling
   classDef awsfill fill:#FF9900,stroke:#B85E00,color:#232F3E;
@@ -90,6 +92,7 @@ flowchart TB
   class igw,nat dark;
   class gha awsfill;
   class user light;
+  class internet light;
   class ekscp light;
   class alb,ng,lbc,ing,svc,mm light;
   class rds,cache,ecr,s3,efs,efsmt data;

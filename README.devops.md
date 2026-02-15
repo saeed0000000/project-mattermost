@@ -61,6 +61,8 @@ Notes:
 
 The architecture diagram for this lab is intentionally **high-level**. It focuses on the main flows (user traffic, CI/CD, app dependencies, and outbound egress) and omits low-level AWS details for readability.
 
+![Mattermost on AWS (EKS) - simplified architecture](docs/mattermost-eks-production-architecture-eu-north-1.png)
+
 Not shown (by design):
 
 - Security Groups / NACLs and the detailed inbound/outbound rules.

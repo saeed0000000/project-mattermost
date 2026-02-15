@@ -57,6 +57,22 @@ Notes:
 - Redis is **ElastiCache** (not in-cluster) in the final design.
 - Observability was prepared as code, and installed only when a cluster exists.
 
+### Architecture Diagram (Simplified)
+
+The architecture diagram for this lab is intentionally **high-level**. It focuses on the main flows (user traffic, CI/CD, app dependencies, and outbound egress) and omits low-level AWS details for readability.
+
+Not shown (by design):
+
+- Security Groups / NACLs and the detailed inbound/outbound rules.
+- Route tables, per-subnet routing, and all VPC attachments.
+- Exact IAM policy statements (GitHub OIDC role and IRSA roles).
+- Optional hardening and production add-ons (WAF, TLS/ACM details, VPC endpoints, etc.).
+
+Also note:
+
+- **Observability** (Prometheus/Grafana + Loki/Promtail) exists **as code** under `helm/observability/`. It becomes part of the real runtime only after installing it on a running EKS cluster.
+- **Ingress/ALB** requires AWS Load Balancer Controller; otherwise use `Service type=LoadBalancer` (see *Ingress: What’s Real vs Optional* below).
+
 ## Repo Map
 
 - `Dockerfile`: multi-stage build (webapp + server) and minimal runtime image.

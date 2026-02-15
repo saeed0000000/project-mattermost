@@ -15,6 +15,15 @@ The DevOps lab work here focuses on building and operating Mattermost in a produ
 
 This is a training project: the AWS infrastructure is meant to be created when needed and destroyed to control cost.
 
+<p align="center">
+  <img
+    src="docs/mattermost-eks-production-architecture-eu-north-1.png"
+    alt="Mattermost on AWS (EKS) - simplified architecture"
+    width="1000"
+  />
+</p>
+<p align="center"><em>High-level architecture diagram (simplified). Click to open full size.</em></p>
+
 ## Prerequisites
 
 - AWS account with permissions to create EKS, VPC, RDS, ElastiCache, S3, EFS, IAM, and ECR.
@@ -60,15 +69,6 @@ Notes:
 ### Architecture Diagram (Simplified)
 
 The architecture diagram for this lab is intentionally **high-level**. It focuses on the main flows (user traffic, CI/CD, app dependencies, and outbound egress) and omits low-level AWS details for readability.
-
-<p align="center">
-  <img
-    src="docs/mattermost-eks-production-architecture-eu-north-1.png"
-    alt="Mattermost on AWS (EKS) - simplified architecture"
-    width="1000"
-  />
-</p>
-<p align="center"><em>High-level architecture diagram (simplified). Click to open full size.</em></p>
 
 Not shown (by design):
 

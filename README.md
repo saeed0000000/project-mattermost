@@ -1,4 +1,4 @@
-# Mattermost DevOps Lab (Training Fork)
+# Mattermost DevOps Project
 
 This repository contains the upstream **Mattermost** source code **plus** DevOps work (AWS + Terraform + EKS + Helm + GitHub Actions).
 

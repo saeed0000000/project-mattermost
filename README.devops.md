@@ -1,11 +1,11 @@
-# Mattermost DevOps Lab (AWS + Terraform + EKS + Helm + GitHub Actions)
+# Mattermost DevOps Project (AWS + Terraform + EKS + Helm + GitHub Actions)
 
-This repository contains the **Mattermost** source code (Go backend + React webapp) **plus** a hands-on DevOps lab.
+This repository contains the **Mattermost** source code (Go backend + React webapp) **plus** the DevOps work done to deploy it on AWS.
 
 - The upstream product/readme is in `README.md` (Mattermost project documentation).
-- This file (`README.devops.md`) documents **the DevOps work** done on top of the Mattermost codebase for learning and portfolio purposes.
+- This file (`README.devops.md`) documents **the DevOps work** done on top of the Mattermost codebase for documentation and portfolio purposes.
 
-The DevOps lab work here focuses on building and operating Mattermost in a production-shaped way on AWS, including:
+The DevOps work here focuses on building and operating Mattermost in a production-shaped way on AWS, including:
 
 - Containerization (multi-stage `Dockerfile`)
 - Kubernetes packaging (Helm chart + values)
@@ -13,7 +13,7 @@ The DevOps lab work here focuses on building and operating Mattermost in a produ
 - CI/CD (GitHub Actions -> ECR, and a deploy workflow for EKS)
 - Optional observability stack (Prometheus/Grafana + Loki/Promtail) as installable Helm values
 
-This is a training project: the AWS infrastructure is meant to be created when needed and destroyed to control cost.
+The AWS infrastructure is meant to be created when needed and destroyed to control cost.
 
 <p align="center">
   <img
@@ -68,7 +68,7 @@ Notes:
 
 ### Architecture Diagram (Simplified)
 
-The architecture diagram for this lab is intentionally **high-level**. It focuses on the main flows (user traffic, CI/CD, app dependencies, and outbound egress) and omits low-level AWS details for readability.
+The architecture diagram for this project is intentionally **high-level**. It focuses on the main flows (user traffic, CI/CD, app dependencies, and outbound egress) and omits low-level AWS details for readability.
 
 Not shown (by design):
 

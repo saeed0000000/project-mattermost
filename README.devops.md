@@ -61,7 +61,14 @@ Notes:
 
 The architecture diagram for this lab is intentionally **high-level**. It focuses on the main flows (user traffic, CI/CD, app dependencies, and outbound egress) and omits low-level AWS details for readability.
 
-![Mattermost on AWS (EKS) - simplified architecture](docs/mattermost-eks-production-architecture-eu-north-1.png)
+<p align="center">
+  <img
+    src="docs/mattermost-eks-production-architecture-eu-north-1.png"
+    alt="Mattermost on AWS (EKS) - simplified architecture"
+    width="1000"
+  />
+</p>
+<p align="center"><em>High-level architecture diagram (simplified). Click to open full size.</em></p>
 
 Not shown (by design):
 

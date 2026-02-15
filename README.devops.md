@@ -1,6 +1,11 @@
 # Mattermost DevOps Lab (AWS + Terraform + EKS + Helm + GitHub Actions)
 
-This repository contains the upstream Mattermost source code **plus** a hands-on DevOps lab where we built a production-shaped deployment on AWS to practice:
+This repository contains the **Mattermost** source code (Go backend + React webapp) **plus** a hands-on DevOps lab.
+
+- The upstream product/readme is in `README.md` (Mattermost project documentation).
+- This file (`README.devops.md`) documents **the DevOps work** done on top of the Mattermost codebase for learning and portfolio purposes.
+
+The DevOps lab work here focuses on building and operating Mattermost in a production-shaped way on AWS, including:
 
 - Containerization (multi-stage `Dockerfile`)
 - Kubernetes packaging (Helm chart + values)

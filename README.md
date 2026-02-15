@@ -1,3 +1,20 @@
+# Mattermost DevOps Lab (Training Fork)
+
+This repository contains the upstream **Mattermost** source code **plus** DevOps work (AWS + Terraform + EKS + Helm + GitHub Actions).
+
+- DevOps documentation and what was built: `README.devops.md`
+
+<p align="center">
+  <img
+    src="docs/mattermost-eks-production-architecture-eu-north-1.png"
+    alt="Mattermost on AWS (EKS) - simplified architecture"
+    width="1000"
+  />
+</p>
+<p align="center"><em>High-level architecture diagram (simplified).</em></p>
+
+---
+
 # [![Mattermost logo](https://user-images.githubusercontent.com/7205829/137170381-fe86eef0-bccc-4fdd-8e92-b258884ebdd7.png)](https://mattermost.com)
 
 [Mattermost](https://mattermost.com) is an open core, self-hosted collaboration platform that offers chat, workflow automation, voice calling, screen sharing, and AI integration. This repo is the primary source for core development on the Mattermost platform; it's written in Go and React, runs as a single Linux binary, and relies on PostgreSQL. A new compiled version is released under an MIT license every month on the 16th.

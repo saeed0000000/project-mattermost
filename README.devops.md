@@ -192,3 +192,4 @@ terraform destroy -var-file=envs/prod.tfvars -auto-approve -var s3_force_destroy
 3. Add metrics-server so HPA works reliably.
 4. Tighten IAM policies for least privilege (GitHub role and IRSA roles).
 5. Add smoke tests to CI (build validation, Helm lint, basic container scan).
+6. Add GitOps with Argo CD: install Argo CD in the cluster and create an `Application` pointing to `helm/mattermost` in this repo.

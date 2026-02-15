@@ -3,7 +3,7 @@
 This repository contains the **Mattermost** source code (Go backend + React webapp) **plus** the DevOps work done to deploy it on AWS.
 
 - The upstream product/readme is in `README.md` (Mattermost project documentation).
-- This file (`README.devops.md`) documents **the DevOps work** done on top of the Mattermost codebase for learning and portfolio purposes.
+- This file (`README.devops.md`) documents **the DevOps work** done on top of the Mattermost codebase for documentation and portfolio purposes.
 
 The DevOps work here focuses on building and operating Mattermost in a production-shaped way on AWS, including:
 

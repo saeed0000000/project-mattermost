@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mattermost-data
+  namespace: mattermost
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp3
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mattermost
+  namespace: mattermost
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 8065
+      targetPort: 8065
+  selector:
+    app: mattermost
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mattermost
+  namespace: mattermost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mattermost
+  template:
+    metadata:
+      labels:
+        app: mattermost
+    spec:
+      containers:
+        - name: mattermost
+          image: 522195962232.dkr.ecr.eu-north-1.amazonaws.com/mm-devops-prod:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8065
+          envFrom:
+            - secretRef:
+                name: mattermost-config
+          volumeMounts:
+            - name: mattermost-data
+              mountPath: /mattermost/data
+            - name: mattermost-data
+              mountPath: /mattermost/plugins
+            - name: mattermost-data
+              mountPath: /mattermost/client/plugins
+      volumes:
+        - name: mattermost-data
+          persistentVolumeClaim:
+            claimName: mattermost-data

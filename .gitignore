@@ -163,3 +163,12 @@ docker-compose.override.yaml
 **/CLAUDE.local.md
 **/CLAUDE.md
 .cursorrules
+
+# Terraform
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+crash.log
+crash.*.log
+
+**/*.plan

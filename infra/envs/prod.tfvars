@@ -1,0 +1,14 @@
+environment       = "prod"
+project_name      = "mm-devops"
+region            = "eu-north-1"
+aws_profile       = "my-terraform-profile"
+az_count          = 2
+nat_single        = true
+node_instance_type = "t3.small"
+node_min_size      = 3
+node_max_size      = 6
+node_desired_size  = 4
+cluster_version    = "1.29"
+rds_instance_class = "db.t3.micro"
+rds_multi_az       = false
+rds_engine_version = null
